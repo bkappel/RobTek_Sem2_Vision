@@ -44,7 +44,14 @@ local.properties
 CMakeFiles/**
 MakeFile
 *cmake
+CMakeCache.txt
+Makefile
 
 #Executable
 grasper
 
+#Tmp Ubuntu Files
+*.*~
+
+#PCL
+*pcd
