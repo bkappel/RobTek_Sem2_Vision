@@ -4,12 +4,12 @@
 #include <sstream>
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
-#include <pcl_visualization/cloud_viewer.h>
+#include <pcl/visualization/cloud_viewer.h>
 
-final int KINECTCLOUDWIDTH = 640;
-final int KINECTCLOUDHEIGHT = 480;
+int KINECTCLOUDWIDTH = 640;
+int KINECTCLOUDHEIGHT = 480;
 
-pcl::PointCloud<pc::PointXYZ> createPointCloudFromFile(std::string filelocation);
+pcl::PointCloud<pcl::PointXYZ> createPointCloudFromFile(std::string filelocation)
 
 int main (int argc, char** argv)
 {
@@ -47,7 +47,7 @@ int main (int argc, char** argv)
 	return (0);
 }
 
-pcl::PointCloud<pc::PointXYZ> createPointCloudFromFile(std::string filelocation)
+pcl::PointCloud<pcl::PointXYZ> createPointCloudFromFile(std::string filelocation)
 {
 	pcl::PointCloud<pcl::PointXYZ> cloud;
 	pointcloud.width = this.KINECTCLOUDWIDTH;
