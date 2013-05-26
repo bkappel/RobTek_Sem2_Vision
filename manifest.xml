@@ -1,0 +1,14 @@
+<package>
+  <description brief="Unknown object grasping Kinect">
+    Grasping unknow object with the kinect
+  </description>
+  <author>Bart Kappel</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url></url>
+  
+  <depend package="roscpp"/>
+  <depend package="std_msgs"/>
+  <depend package="sensor_msgs"/>
+</package>
+
