@@ -10,5 +10,13 @@ add_definitions(${PCL_DEFINITIONS})
 find_package(OpenCV REQUIRED)
 
 
-add_executable(grasper kinectpointcloud.cpp)
+#ROS
+#find_package(roscpp REQUIRED)
+include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+rosbuild_init()
+#rosbuild_add_executable(testTF src/test/main.cpp)
+#target_link_libraries(testTF TF)
+
+#add_executable(grasper kinectpointcloud.cpp)
+rosbuild_add_executable(grasper kinectpointcloud.cpp)
 target_link_libraries(grasper ${PCL_LIBRARIES} ${OpenCV_LIBS})
