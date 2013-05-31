@@ -26,19 +26,34 @@ const float grippersize = 0.2;
 
 // Ros kinect topic callback
 void callback(const sensor_msgs::PointCloud2ConstPtr& input) {
-	//Inside the callback should be all the process that needed to be done with the point cloud
-	pcl::PointCloud<pcl::PointXYZ> cloudKinect;
-	pcl::fromROSMsg(*input, cloudKinect);
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(&cloudKinect);
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_f(new pcl::PointCloud<pcl::PointXYZ>);
+pcl::PointCloud<pcl::PointXYZ>::Ptr cloudKinect(new pcl::PointCloud<pcl::PointXYZ>());
+pcl::fromROSMsg(*input, *cloudKinect);
+pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_f(new pcl::PointCloud<pcl::PointXYZ>());
 
+//std::cout << cloud << std::endl;
+
+//ROS_INFO(input);	
+
+	//Inside the callback should be all the process that needed to be done with the point cloud
+	//pcl::PointCloud<pcl::PointXYZ> cloudKinect;
+	//pcl::fromROSMsg(*input, cloudKinect);
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(cloudKinect);
+	//pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_f(new pcl::PointCloud<pcl::PointXYZ>);
+	std::cout << cloud->points.size () << std::endl;
 			 // Create the filtering object: downsample the dataset using a leaf size of 1cm
 	  pcl::VoxelGrid<pcl::PointXYZ> vg;
-	  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZ>);
-	  vg.setInputCloud (cloud);
+	  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZ>());
+ 
+	  //vg.setInputCloud (cloud);
 	  vg.setLeafSize (0.01f, 0.01f, 0.01f);
 	  vg.filter (*cloud_filtered);
 
+	std::cout << *cloud << std::endl;
+
+ // pcl::PassThrough<pcl::PointXYZ> pass;
+ // pass.setInputCloud (cloud);
+
+/*
 	  // Create the segmentation object for the planar model and set all the parameters
 	  pcl::SACSegmentation<pcl::PointXYZ> seg;
 	  pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
@@ -115,13 +130,13 @@ void callback(const sensor_msgs::PointCloud2ConstPtr& input) {
 	      Eigen::Vector4f centroid;
 	      pcl::compute3DCentroid(*cloud_cluster, centroid);
 
-	      /*for (pcl::PointCloud<pcl::PointXYZ>::iterator p = cloud_cluster->points.begin(); p < cloud_cluster->points.end(); p++)
-	      {
-	  	if(p.x < minX){ minX = p; }
-	  	if(p.x > maxX){ maxX = p; }
-	  	if(p.y < minY){ minY = p; }
-	  	if(p.y > maxY){ maxY = p; }
-	      }*/
+//	      for (pcl::PointCloud<pcl::PointXYZ>::iterator p = cloud_cluster->points.begin(); p < cloud_cluster->points.end(); p++)
+//	      {
+//	  	if(p.x < minX){ minX = p; }
+//	  	if(p.x > maxX){ maxX = p; }
+//	  	if(p.y < minY){ minY = p; }
+//	  	if(p.y > maxY){ maxY = p; }
+//	      }
 
 	      std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
 	      std::cout << "Centroid " << centroid[0] << "," << centroid[1] << "," << centroid[2] << "." << std::endl;
@@ -148,7 +163,7 @@ void callback(const sensor_msgs::PointCloud2ConstPtr& input) {
 	      }
 
 	  }
-
+*/
 
 
 }
