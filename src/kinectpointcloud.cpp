@@ -11,6 +11,12 @@
 #include <pcl/segmentation/extract_clusters.h>
 #include "ros/ros.h"
 #include "std_msgs/String.h"
+#include <pcl/ros/conversions.h>
+#include <pcl/point_cloud.h>
+#include <pcl/filters/voxel_grid.h>
+#include <sensor_msgs/PointCloud2.h>
+#include "boost/shared_ptr.hpp"
+
 
 
 sensor_msgs::PointCloud2 kinectcloud;
@@ -23,9 +29,10 @@ void callback(const sensor_msgs::PointCloud2ConstPtr& input) {
 	//Inside the callback should be all the process that needed to be done with the point cloud
 	pcl::PointCloud<pcl::PointXYZ> cloudKinect;
 	pcl::fromROSMsg(*input, cloudKinect);
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (cloudKinect), cloud_f (new pcl::PointCloud<pcl::PointXYZ>);
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(&cloudKinect);
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_f(new pcl::PointCloud<pcl::PointXYZ>);
 
-	 // Create the filtering object: downsample the dataset using a leaf size of 1cm
+			 // Create the filtering object: downsample the dataset using a leaf size of 1cm
 	  pcl::VoxelGrid<pcl::PointXYZ> vg;
 	  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZ>);
 	  vg.setInputCloud (cloud);
@@ -68,7 +75,7 @@ void callback(const sensor_msgs::PointCloud2ConstPtr& input) {
 	    // Remove the planar inliers, extract the rest
 	    extract.setNegative (true);
 	    extract.filter (*cloud_f);
-	    *cloud_filtered = *cloud_f;
+	 *cloud_filtered = *cloud_f;
 	  }
 
 	  // Creating the KdTree object for the search method of the extraction
@@ -139,6 +146,7 @@ void callback(const sensor_msgs::PointCloud2ConstPtr& input) {
 	     	msg.data = ss.str();
 	     	visionPublisher.publish(msg);
 	      }
+
 	  }
 
 

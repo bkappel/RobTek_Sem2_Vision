@@ -1,14 +1,19 @@
 <package>
-  <description brief="Unknown object grasping Kinect">
-    Grasping unknow object with the kinect
+  <description brief="RobTek_Sem2_Vision">
+
+     RobTek_Sem2_Vision
+
   </description>
-  <author>Bart Kappel</author>
+  <author>daniel</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
-  <url></url>
-  
+  <url>http://ros.org/wiki/RobTek_Sem2_Vision</url>
+  <depend package="pcl"/>
+  <depend package="pcl_ros"/>
   <depend package="roscpp"/>
-  <depend package="std_msgs"/>
   <depend package="sensor_msgs"/>
+  <rosdep name="boost" />
+
 </package>
+
 

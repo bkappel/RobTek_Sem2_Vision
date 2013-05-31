@@ -1,23 +1,38 @@
-cmake_minimum_required (VERSION 2.4.6)
-include ($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+cmake_minimum_required(VERSION 2.4.6)
+include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 
-# Initialize the ROS build system.
-rosbuild_init ()
+# Set the build type.  Options are:
+#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
+#  Debug          : w/ debug symbols, w/o optimization
+#  Release        : w/o debug symbols, w/ optimization
+#  RelWithDebInfo : w/ debug symbols, w/ optimization
+#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
+#set(ROS_BUILD_TYPE RelWithDebInfo)
 
-# Set the default path for built executables to the "bin" directory.
-#set (EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+rosbuild_init()
+
+#set the default path for built executables to the "bin" directory
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+#set the default path for built libraries to the "lib" directory
+set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 # Set the name to use for the executable.
 set (BINNAME grasper)
 
 # Set the source files to use with the executable.
-set (SRCS ${SRCS} kinectpointcloud.cpp)
+set (SRCS ${SRCS} src/kinectpointcloud.cpp)
 
-# Have ROS autogenerate code used in messages.
-rosbuild_genmsg ()
+#uncomment if you have defined messages
+#rosbuild_genmsg()
+#uncomment if you have defined services
+#rosbuild_gensrv()
 
-# Set the directories where include files can be found.
-#include_directories (include)
-
+#common commands for building c++ executables and libraries
+#rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
+#target_link_libraries(${PROJECT_NAME} another_library)
+rosbuild_add_boost_directories()
+#rosbuild_link_boost(${PROJECT_NAME} thread)
 # Build the executable that will be used to run this node.
 rosbuild_add_executable (${BINNAME} ${SRCS})
+#rosbuild_add_executable(example examples/example.cpp)
+#target_link_libraries(example ${PROJECT_NAME})
