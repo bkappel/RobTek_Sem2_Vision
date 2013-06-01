@@ -9,23 +9,27 @@
 #include <pcl/sample_consensus/model_types.h>
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/segmentation/extract_clusters.h>
-#include "ros/ros.h"
-#include "std_msgs/String.h"
-
-
-sensor_msgs::PointCloud2 kinectcloud;
-ros::Publisher visionPublisher;
+#include <pcl/io/openni_grabber.h>
+#include <pcl/visualization/cloud_viewer.h>
 
 const float grippersize = 0.2;
 
-// Ros kinect topic callback
-void callback(const sensor_msgs::PointCloud2ConstPtr& input) {
-	//Inside the callback should be all the process that needed to be done with the point cloud
-	pcl::PointCloud<pcl::PointXYZ> cloudKinect;
-	pcl::fromROSMsg(*input, cloudKinect);
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (cloudKinect), cloud_f (new pcl::PointCloud<pcl::PointXYZ>);
+//see http://www.openperception.net/documentation/tutorials/openni_grabber.php#openni-grabber
 
-	 // Create the filtering object: downsample the dataset using a leaf size of 1cm
+ class SimpleOpenNIViewer
+ {
+   public:
+     SimpleOpenNIViewer () : viewer ("PCL OpenNI Viewer") {}
+
+     void cloud_cb_ (const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &cloudcallback)
+     {
+       if (!viewer.wasStopped())
+       {
+         viewer.showCloud (cloud);
+         
+         pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (cloudcallback), cloud_f (new pcl::PointCloud<pcl::PointXYZ>);
+         
+         // Create the filtering object: downsample the dataset using a leaf size of 1cm
 	  pcl::VoxelGrid<pcl::PointXYZ> vg;
 	  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZ>);
 	  vg.setInputCloud (cloud);
@@ -108,48 +112,55 @@ void callback(const sensor_msgs::PointCloud2ConstPtr& input) {
 	      Eigen::Vector4f centroid;
 	      pcl::compute3DCentroid(*cloud_cluster, centroid);
 
-	      /*for (pcl::PointCloud<pcl::PointXYZ>::iterator p = cloud_cluster->points.begin(); p < cloud_cluster->points.end(); p++)
-	      {
-	  	if(p.x < minX){ minX = p; }
-	  	if(p.x > maxX){ maxX = p; }
-	  	if(p.y < minY){ minY = p; }
-	  	if(p.y > maxY){ maxY = p; }
-	      }*/
-
-	      std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
-	      std::cout << "Centroid " << centroid[0] << "," << centroid[1] << "," << centroid[2] << "." << std::endl;
-	      std::cout << "min x: " << minX << std::endl;
-	      std::cout << "max x: " << maxX << std::endl;
-	      std::cout << "min y: " << minY << std::endl;
-	      std::cout << "max y: " << maxY << std::endl;
+// 	      std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
+// 	      std::cout << "Centroid " << centroid[0] << "," << centroid[1] << "," << centroid[2] << "." << std::endl;
+// 	      std::cout << "min x: " << minX << std::endl;
+// 	      std::cout << "max x: " << maxX << std::endl;
+// 	      std::cout << "min y: " << minY << std::endl;
+// 	      std::cout << "max y: " << maxY << std::endl;
 
 	      float xdist = std::abs(minX-maxY);
 	      float ydist = std::abs(minY-maxY);
 
-	      std::cout << "dist x: " << xdist << std::endl;
-	      std::cout << "dist y: " << ydist << std::endl;
+// 	      std::cout << "dist x: " << xdist << std::endl;
+// 	      std::cout << "dist y: " << ydist << std::endl;
 
 	      if(xdist < grippersize || ydist < grippersize){
 	        std::cout << "Graspable" << std::endl;
-	     	std_msgs::String msg;
-	     	std::stringstream ss;
-	     	ss << centroid[0] << ",";
-	     	ss << centroid[1] << ",";
-	     	ss << centroid[2];
-	     	msg.data = ss.str();
-	     	visionPublisher.publish(msg);
+	     	std::cout << "" << centroid[0] << std::endl;
+	     	std::cout << "" << centroid[1] << std::endl;
+	     	std::cout << "" << centroid[2] << std::endl;
 	      }
 	  }
+         
+    	}
+     }
 
+     void run ()
+     {
+       pcl::Grabber* interface = new pcl::OpenNIGrabber();
 
+       boost::function<void (const pcl::PointCloud<pcl::PointXYZ>::ConstPtr&)> f =
+         boost::bind (&SimpleOpenNIViewer::cloud_cb_, this, _1);
 
-}
+       interface->registerCallback (f);
+
+       interface->start ();
+
+       while (!viewer.wasStopped())
+       {
+         boost::this_thread::sleep (boost::posix_time::seconds (1));
+       }
+
+       interface->stop ();
+     }
+
+     pcl::visualization::CloudViewer viewer;
+ };
 
 int main(int argc, char** argv)
 {
-	ros::init (argc, argv, "SUB_IND_PUB");
-	ros::NodeHandle nh;
-	visionPublisher = nh.advertise<std_msgs::String>("/vision/grabbing/location", 1000);
-	ros::Subscriber sub = nh.subscribe("/camera/depth_registered/points", 1, callback);
-	ros::spin();
+   SimpleOpenNIViewer v;
+   v.run ();
+   return 0;
 }
