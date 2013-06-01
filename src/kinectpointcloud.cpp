@@ -1,21 +1,26 @@
+#include <ros/ros.h>
+#include <sensor_msgs/PointCloud2.h>
 #include <pcl/ModelCoefficients.h>
 #include <pcl/point_types.h>
-#include <pcl/io/pcd_io.h>
-#include <pcl/filters/extract_indices.h>
-#include <pcl/filters/voxel_grid.h>
+
 #include <pcl/features/normal_3d.h>
 #include <pcl/kdtree/kdtree.h>
 #include <pcl/sample_consensus/method_types.h>
 #include <pcl/sample_consensus/model_types.h>
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/segmentation/extract_clusters.h>
-#include "ros/ros.h"
-#include "std_msgs/String.h"
+
+
+#include <pcl_ros/point_cloud.h>
+#include <std_msgs/String.h>
 #include <pcl/ros/conversions.h>
-#include <pcl/point_cloud.h>
-#include <pcl/filters/voxel_grid.h>
-#include <sensor_msgs/PointCloud2.h>
-#include "boost/shared_ptr.hpp"
+
+#include <pcl_ros/io/pcd_io.h>
+#include <pcl_ros/filters/voxel_grid.h>
+#include <pcl_ros/filters/extract_indices.h>
+#include <pcl_ros/impl/transforms.hpp>
+
+#include <boost/shared_ptr.hpp>
 
 
 
@@ -44,7 +49,7 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_f(new pcl::PointCloud<pcl::PointXYZ>()
 	  pcl::VoxelGrid<pcl::PointXYZ> vg;
 	  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZ>());
  
-	  //vg.setInputCloud (cloud);
+	  vg.setInputCloud (cloud);
 	  vg.setLeafSize (0.01f, 0.01f, 0.01f);
 	  vg.filter (*cloud_filtered);
 
@@ -53,7 +58,7 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_f(new pcl::PointCloud<pcl::PointXYZ>()
  // pcl::PassThrough<pcl::PointXYZ> pass;
  // pass.setInputCloud (cloud);
 
-/*
+
 	  // Create the segmentation object for the planar model and set all the parameters
 	  pcl::SACSegmentation<pcl::PointXYZ> seg;
 	  pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
@@ -163,7 +168,7 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_f(new pcl::PointCloud<pcl::PointXYZ>()
 	      }
 
 	  }
-*/
+
 
 
 }
