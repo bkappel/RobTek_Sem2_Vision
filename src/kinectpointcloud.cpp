@@ -143,28 +143,33 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_f(new pcl::PointCloud<pcl::PointXYZ>()
 //	  	if(p.y > maxY){ maxY = p; }
 //	      }
 
-	      std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
-	      std::cout << "Centroid " << centroid[0] << "," << centroid[1] << "," << centroid[2] << "." << std::endl;
-	      std::cout << "min x: " << minX << std::endl;
-	      std::cout << "max x: " << maxX << std::endl;
-	      std::cout << "min y: " << minY << std::endl;
-	      std::cout << "max y: " << maxY << std::endl;
+// 	      std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
+// 	      std::cout << "Centroid " << centroid[0] << "," << centroid[1] << "," << centroid[2] << "." << std::endl;
+// 	      std::cout << "min x: " << minX << std::endl;
+// 	      std::cout << "max x: " << maxX << std::endl;
+// 	      std::cout << "min y: " << minY << std::endl;
+// 	      std::cout << "max y: " << maxY << std::endl;
 
 	      float xdist = std::abs(minX-maxY);
 	      float ydist = std::abs(minY-maxY);
 
-	      std::cout << "dist x: " << xdist << std::endl;
-	      std::cout << "dist y: " << ydist << std::endl;
+// 	      std::cout << "dist x: " << xdist << std::endl;
+// 	      std::cout << "dist y: " << ydist << std::endl;
 
 	      if(xdist < grippersize || ydist < grippersize){
-	        std::cout << "Graspable" << std::endl;
+// 	        std::cout << "Graspable" << std::endl;
 	     	std_msgs::String msg;
-	     	std::stringstream ss;
-	     	ss << centroid[0] << ",";
-	     	ss << centroid[1] << ",";
-	     	ss << centroid[2];
-	     	msg.data = ss.str();
+	     	std::stringstream rosmsg;
+	     	rosmsg << centroid[0] << ",";
+	     	rosmsg << centroid[1] << ",";
+	     	rosmsg << centroid[2];
+	     	msg.data = rosmsg.str();
 	     	visionPublisher.publish(msg);
+	     	
+	     	std::stringstream ss;
+            ss << "graspable_object" << j << ".pcd";
+            writer.write<pcl::PointXYZ> (ss.str (), *cloud_cluster, false);
+    	    j++;
 	      }
 
 	  }
