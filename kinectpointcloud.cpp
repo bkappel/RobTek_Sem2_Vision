@@ -1,4 +1,6 @@
+#include <pcl/pcl_config.h>
 #include <pcl/ModelCoefficients.h>
+#include <pcl/common/time.h>
 #include <pcl/point_types.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/filters/extract_indices.h>
@@ -11,6 +13,10 @@
 #include <pcl/segmentation/extract_clusters.h>
 #include <pcl/io/openni_grabber.h>
 #include <pcl/visualization/cloud_viewer.h>
+#include <pcl/io/grabber.h>
+#include <pcl/io/openni_grabber.h>
+#include <boost/shared_ptr.hpp>
+
 
 const float grippersize = 0.2;
 
@@ -19,15 +25,20 @@ const float grippersize = 0.2;
  class SimpleOpenNIViewer
  {
    public:
-     SimpleOpenNIViewer () : viewer ("PCL OpenNI Viewer") {}
+     SimpleOpenNIViewer() : viewer ("PCL OpenNI Viewer") {}
 
-     void cloud_cb_ (const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &cloudcallback)
+     void cloud_cb_ (const pcl::PointCloud<pcl::PointXYZ>::ConstPtr& cloudcallback)
      {
        if (!viewer.wasStopped())
        {
+		   
+		   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ> (*cloudcallback));
+		  // pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+		 //  cloud = cloudcallback.ma;
+			 pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_f(new pcl::PointCloud<pcl::PointXYZ>);
          viewer.showCloud (cloud);
          
-         pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (cloudcallback), cloud_f (new pcl::PointCloud<pcl::PointXYZ>);
+         
          
          // Create the filtering object: downsample the dataset using a leaf size of 1cm
 	  pcl::VoxelGrid<pcl::PointXYZ> vg;
